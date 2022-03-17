@@ -1,0 +1,75 @@
+parameters:
+  - in: body
+    name: test_selling
+    required: true
+    schema:
+      $ref: '#/definitions/JobsInput'
+
+definitions:
+  JobsInput:
+    type: object
+    properties:
+      id:
+        type: string
+        description: 'Unique identifier for each good, employee or customer'
+      name:
+        description: 'name of the good'
+        type: string
+      brand:
+        description: 'name of the brand'
+        type: string
+      price:
+        description: 'price of the good'
+        type: number
+      quantity:
+        description: 'quantity of the good'
+        type: number
+      whosell:
+        $ref: '#/definitions/Whosell'
+      whobuy:
+        $ref: '#/definitions/Whobuy'
+
+  Whosell:
+    type: object
+    properties:
+      id:
+        type: string
+        description: 'Unique identifier for each good, employee or customer'
+      name:
+        description: 'name of the employee that sell the good'
+        type: string
+      phone_number:
+        description: 'phone number of the employee that sell the good'
+        type: string
+      address:
+        description: 'phone number of the employee that sell the good'
+        $ref: '#/definitions/Address'
+  Whobuy:
+    type: object
+    properties:
+      id:
+        type: string
+        description: 'Unique identifier for each good, employee or customer'
+      name:
+        description: 'name of the customer that sell the good'
+        type: string
+      phone_number:
+        description: 'phone number of the customer that sell the good'
+        type: string
+      address:
+        description: 'phone number of the customer that sell the good'
+        $ref: '#/definitions/Address'
+
+  Address:
+    type: object
+    properties:
+      country_name:
+        type: string
+        description: The country of customer or seller
+      district:
+        type: string
+        description: The district where customer or seller live
+
+responses:
+  200:
+    description: response
