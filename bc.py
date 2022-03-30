@@ -3,22 +3,24 @@ import hashlib
 import json
 
 class Node:
-    def __init__(self, prev_hash, data, index):
+    def __init__(self, prev_hash, data, signer, index):
         self.block = {
             'index': index,
+            'signer': str(signer),
             'timestamp': str(datetime.datetime.now()),
             'data': data,
             'previous_hash': prev_hash}
 
     def get_block(self):
-        self.block["block_hash"] = self.hash()
+        hash = self._hash()
+        self.block["block_hash"] = hash
         return self.block
 
-    def hash(self):
+    def _hash(self):
         encoded_block = json.dumps(self.block, sort_keys=True).encode()
         return hashlib.sha256(encoded_block).hexdigest()
 
-class Blockchain:
+class SimpleBlockchain:
     def __init__(self):
         self.chain = []
         self.create_block(data=1, previous_hash='0')
@@ -78,15 +80,18 @@ if __name__ == '__main__':
         'phone_number': '0332460789',
     }
 
-    node = Node('0', data=customer, index=2)
-    print(node.hash())
+    node = Node(prev_hash='0', data=customer, signer='Duc Anh', index=2)
+    print('nodeblock with hash:',node.get_block())
 
     demo_block = {
         'index': 2,
+        'signer': 'Duc Anh',
         'timestamp': str(datetime.datetime.now()),
-        'proof': customer,
+        'data': customer,
         'previous_hash': '0'}
 
     encoded_block = json.dumps(demo_block, sort_keys=True).encode()
-    print(hashlib.sha256(encoded_block).hexdigest())
-    print(datetime.datetime.now())
+    print('demo:', demo_block)
+    hash = hashlib.sha256(encoded_block).hexdigest()
+    demo_block['block_hash'] = hash
+    print('demoblock with hash:', demo_block)

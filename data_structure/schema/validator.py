@@ -81,7 +81,7 @@ def main():
     }
 
     validator = ValidateSellingGoods()
-    print('Validate used car result:', validator.validate(selling_info))
+    print('Validate used node result:', validator.validate(selling_info))
 
 
 if __name__ == '__main__':
