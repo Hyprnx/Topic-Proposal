@@ -1,5 +1,7 @@
+import pymongo.errors
 from pymongo import MongoClient
 from pymongo.database import Database
+from pymongo.results import InsertOneResult
 from bc import *
 import datetime
 from base import BaseClass
@@ -39,11 +41,15 @@ class DemoDatabaseManager(DatabaseManager):
             prev_hash, prev_index = self._get_last_hash()
             element = Node(prev_hash=prev_hash, data=data, signer=signer, index=str(int(prev_index) + 1))
             respond = db[self.DB_NAME].insert_one(element.get_block_info())
-            return respond
 
         except IndexError:
             element = Node(prev_hash='0', data={'message': 'The first blockchain node'}, signer='To Duc Anh', index='0')
             respond = db[self.DB_NAME].insert_one(element.get_block_info())
+
+        if not isinstance(respond, InsertOneResult):
+            raise pymongo.errors.OperationFailure('Failed inserting data')
+
+        return True
 
     def query_data(self, query=None):
         if not isinstance(query, dict):

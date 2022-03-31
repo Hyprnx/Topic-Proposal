@@ -1,6 +1,11 @@
+import flask
 from flasgger import Swagger
-from flask import Flask, request
+from flask import Flask, request, make_response, jsonify
+
 from bc import *
+from database_manager import *
+
+demo_database_manager = DemoDatabaseManager()
 
 app = Flask(__name__)
 
@@ -18,15 +23,15 @@ def landing_page():
 def system_status():
     return {'status': 'OK'}
 
-@app.route('/test')
+@app.route('/demo', methods=['POST'])
 def demo():
-    entry = request.json
-    node = Node('0', entry, index=2)
-    if len(node.hash()) == 64:
-        return {
-            "result": node.get_block(),
-            "hash": node.hash()
-            }
+    signer = request.args.get('signer', 'To Duc Anh')
+    data = request.args.get('data', 'This is a blank block')
+    try:
+        respond = demo_database_manager.insert_data(data, signer)
+        return make_response(jsonify(respond), 200)
+    except pymongo.errors.OperationFailure as e:
+        return make_response(jsonify(e), 500)
 
 
 @app.route('/add_employee', methods=['POST'])
