@@ -9,11 +9,12 @@ class Node:
             'signer': str(signer),
             'timestamp': str(datetime.datetime.now()),
             'data': data,
-            'previous_hash': prev_hash}
+            'previous_hash': prev_hash
+        }
 
-    def get_block(self):
+    def get_block_info(self):
         hash = self._hash()
-        self.block["block_hash"] = hash
+        self.block["_id"] = hash
         return self.block
 
     def _hash(self):
@@ -47,9 +48,6 @@ class SimpleBlockchain:
 
         return new_proof
 
-    def hash(self, block):
-        encoded_block = json.dumps(block, sort_keys=True).encode()
-        return hashlib.sha256(encoded_block).hexdigest()
 
     def chain_valid(self, chain):
         previous_block = chain[0]
