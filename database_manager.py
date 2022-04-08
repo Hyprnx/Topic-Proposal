@@ -38,6 +38,8 @@ class DatabaseManager(BaseClass):
 
 class DemoDatabaseManager(DatabaseManager):
     DB_NAME = 'demo'
+    def __init__(self):
+        super().__init__()
 
     def insert_data(self, data=None, signer=None):
         self.log.info('Trying to insert data')
