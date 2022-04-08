@@ -20,6 +20,7 @@ if not isinstance(db, Database):
 
 class DatabaseManager(BaseClass):
     DB_NAME = None
+
     def __init__(self):
         super().__init__()
 
@@ -33,12 +34,13 @@ class DatabaseManager(BaseClass):
     def query_data(self, data=None):
         raise NotImplementedError('NOT IMPLEMENTED, CALL METHOD IN SUBCLASS')
 
-    def edit_data(self, data=None):
-        raise NotImplementedError('NOT IMPLEMENTED, CALL METHOD IN SUBCLASS')
+    # def edit_data(self, data=None):
+    #     raise NotImplementedError('NOT IMPLEMENTED, CALL METHOD IN SUBCLASS')
 
 
 class DemoDatabaseManager(DatabaseManager):
     DB_NAME = 'demo'
+
     def __init__(self):
         super().__init__()
 
@@ -51,7 +53,8 @@ class DemoDatabaseManager(DatabaseManager):
             element = Node(prev_hash=prev_hash, data=data, signer=signer, index=str(int(prev_index) + 1))
             respond = db[self.DB_NAME].insert_one(element.get_block_info())
         except IndexError:
-            element = Node(prev_hash='0', data={'message': 'The first blockchain node'}, signer='To Duc Anh', index='0', _block_hash='0')
+            element = Node(prev_hash='0', data={'message': 'The first blockchain node'}, signer='To Duc Anh', index='0',
+                           _block_hash='0')
             respond = db[self.DB_NAME].insert_one(element.get_block_info())
 
         self.log.info(respond)
@@ -70,11 +73,9 @@ class DemoDatabaseManager(DatabaseManager):
     def find_random(self):
         return db[self.DB_NAME].find()
 
-
     def _get_last_hash(self):
         last_node = db[self.DB_NAME].find().sort('timestamp', -1)[0]
         return last_node['_id'], last_node['index']
-
 
     def __delete(self, query):
         if not isinstance(query, dict):
@@ -89,11 +90,10 @@ class DemoDatabaseManager(DatabaseManager):
                 prev_hash = data['_id']
             else:
                 self.log.info(prev_hash, data['previous_hash'])
-                self.log.critical('Blockchain interupted, this blockchain is no longer valid')
+                self.log.critical('Blockchain interrupted, this blockchain is no longer valid')
                 return False
         self.log.info('Blockchain is safe')
         return True
-
 
 
 # class EmployeeManager(DatabaseManager):
@@ -104,7 +104,7 @@ def main():
     mng = DemoDatabaseManager()
     blockchain_first_block = {
         'data': 'Hello, this is the first block in the blockchain',
-        }
+    }
 
     # element = Node(prev_hash='0', data=blockchain_first_block, signer='To Duc Anh', index='0')
     #
@@ -115,9 +115,6 @@ def main():
     # print(mng._get_last_hash())
 
     print(mng.validate())
-
-
-
 
 
 if __name__ == '__main__':
