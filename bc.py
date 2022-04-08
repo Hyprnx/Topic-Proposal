@@ -1,9 +1,18 @@
 import datetime
 import hashlib
 import json
+import warnings
+
+
 
 class Node:
-    def __init__(self, prev_hash, data, signer, index):
+    def __init__(self, prev_hash, data, signer, index, _block_hash=None):
+        if _block_hash:
+            warnings.warn('BLOCK HASH IS NOT TO EDIT! EDITING BLOCK HASH MIGHT CORRUPT THE BLOCKCHAIN!'
+                          'ONLY DO THIS TO SET THE HASH FOR FIRST BLOCK')
+
+        self._block_hash = _block_hash
+
         self.block = {
             'index': index,
             'signer': str(signer),
@@ -18,6 +27,8 @@ class Node:
         return self.block
 
     def _hash(self):
+        if self._block_hash:
+            return self._block_hash
         encoded_block = json.dumps(self.block, sort_keys=True).encode()
         return hashlib.sha256(encoded_block).hexdigest()
 
