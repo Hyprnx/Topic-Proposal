@@ -3,7 +3,7 @@ import logging
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 
-from data_structure.schema.schemas import *
+from common.data_structure.schema.schemas import *
 
 from base import BaseClass
 

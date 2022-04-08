@@ -1,6 +1,5 @@
 from pymongo import MongoClient
 import datetime
-from data_structure.schema.validator import *
 
 host = 'localhost'
 port = 27017

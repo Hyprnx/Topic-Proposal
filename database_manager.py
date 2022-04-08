@@ -5,6 +5,7 @@ from pymongo.results import InsertOneResult
 from bc import *
 import datetime
 from base import BaseClass
+from common.exceptions.Validation import ValidationException
 
 host = 'localhost'
 port = 27017
@@ -42,6 +43,8 @@ class DemoDatabaseManager(DatabaseManager):
         super().__init__()
 
     def insert_data(self, data=None, signer=None):
+        if not self.validate():
+            raise ValidationException('Blockchain is corrupted')
         self.log.info('Trying to insert data')
         try:
             prev_hash, prev_index = self._get_last_hash()

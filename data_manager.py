@@ -10,7 +10,7 @@ demo_database_manager = DemoDatabaseManager()
 app = Flask(__name__)
 
 app.config['SWAGGER'] = {
-    'doc_dir': 'data_structure/apidocs'
+    'doc_dir': 'common/data_structure/apidocs'
 }
 swagger = Swagger(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
