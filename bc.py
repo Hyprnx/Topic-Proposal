@@ -23,7 +23,7 @@ class Node:
 
     def get_block_info(self):
         hash = self._hash()
-        self.block["_id"] = hash
+        self.block["blockhash"] = hash
         return self.block
 
     def _hash(self):

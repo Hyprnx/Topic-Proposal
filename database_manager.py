@@ -3,7 +3,6 @@ from pymongo import MongoClient
 from pymongo.database import Database
 from pymongo.results import InsertOneResult
 from bc import *
-import datetime
 from base import BaseClass
 from common.exceptions.Validation import ValidationException
 
@@ -30,23 +29,21 @@ class DatabaseManager(BaseClass):
 
     def insert_data(self, data=None):
         raise NotImplementedError('NOT IMPLEMENTED, CALL METHOD IN SUBCLASS')
-
-    def query_data(self, data=None):
-        raise NotImplementedError('NOT IMPLEMENTED, CALL METHOD IN SUBCLASS')
+#
+#     def query_data(self, data=None):
+#         raise NotImplementedError('NOT IMPLEMENTED, CALL METHOD IN SUBCLASS')
 
     # def edit_data(self, data=None):
     #     raise NotImplementedError('NOT IMPLEMENTED, CALL METHOD IN SUBCLASS')
 
 
-class DemoDatabaseManager(DatabaseManager):
-    DB_NAME = 'demo'
+class BlockChainManager(DatabaseManager):
+    DB_NAME = None
 
     def __init__(self):
         super().__init__()
 
-    def insert_data(self, data=None, signer=None):
-        if not self.validate():
-            raise ValidationException('Blockchain is corrupted')
+    def insert_block(self, data=None, signer=None):
         self.log.info('Trying to insert data')
         try:
             prev_hash, prev_index = self._get_last_hash()
@@ -58,6 +55,10 @@ class DemoDatabaseManager(DatabaseManager):
             respond = db[self.DB_NAME].insert_one(element.get_block_info())
 
         self.log.info(respond)
+
+        if not self.validate():
+            raise ValidationException('Blockchain is corrupted')
+
         if not isinstance(respond, InsertOneResult):
             self.log.info('Failed inserting data')
             raise pymongo.errors.OperationFailure('Failed inserting data')
@@ -65,29 +66,27 @@ class DemoDatabaseManager(DatabaseManager):
         self.log.info('Successfully inserted data')
         return True
 
-    def query_data(self, query=None):
+    def query_block(self, query=None):
         if not isinstance(query, dict):
             raise ValueError('Query must be a dictionary')
         yield db[self.DB_NAME].find(query)
 
-    def find_random(self):
+    def get_last_block(self):
         return db[self.DB_NAME].find()
+
+    def get_first_block(self):
+        return db[self.DB_NAME].find().sort('timestamp', -1)[0]
 
     def _get_last_hash(self):
         last_node = db[self.DB_NAME].find().sort('timestamp', -1)[0]
-        return last_node['_id'], last_node['index']
-
-    def __delete(self, query):
-        if not isinstance(query, dict):
-            raise ValueError('Query must be a dictionary')
-        return db[self.DB_NAME].delete_many(query)
+        return last_node['blockhash'], last_node['index']
 
     def validate(self):
         self.log.info('Validating Blockchain...')
         prev_hash = '0'
         for i, data in enumerate(db[self.DB_NAME].find()):
             if data['previous_hash'] == prev_hash:
-                prev_hash = data['_id']
+                prev_hash = data['blockhash']
             else:
                 self.log.info(prev_hash, data['previous_hash'])
                 self.log.critical('Blockchain interrupted, this blockchain is no longer valid')
@@ -96,26 +95,36 @@ class DemoDatabaseManager(DatabaseManager):
         return True
 
 
-# class EmployeeManager(DatabaseManager):
-#     DB_NAME = 'employee'
+class DemoBlockChainManager(BlockChainManager):
+    DB_NAME = 'demo'
 
+    def __init__(self):
+        super().__init__()
+
+class CustomerBlockChainManager(BlockChainManager):
+    DB_NAME = 'customers'
+
+    def __init__(self):
+        super().__init__()
+
+class EmployeeBlockChainManager(BlockChainManager):
+    DB_NAME = 'employee'
+
+    def __init__(self):
+        super().__init__()
 
 def main():
-    mng = DemoDatabaseManager()
+    mng = EmployeeBlockChainManager()
     blockchain_first_block = {
         'data': 'Hello, this is the first block in the blockchain',
     }
 
-    # element = Node(prev_hash='0', data=blockchain_first_block, signer='To Duc Anh', index='0')
-    #
-    # print(element.get_block_info())
+    path = 'common/demo_data/employee.json'
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
 
-    # print(mng.insert_data(data=blockchain_first_block, signer='To Duc Anh'))
-
-    # print(mng._get_last_hash())
-
-    print(mng.validate())
-
+    for i in data:
+        mng.insert_block(i, signer='Duc Anh')
 
 if __name__ == '__main__':
     main()
