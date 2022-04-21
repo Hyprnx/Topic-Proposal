@@ -5,7 +5,7 @@ from flask import Flask, request, make_response, jsonify
 from bc import *
 from database_manager import *
 
-demo_database_manager = DemoDatabaseManager()
+demo_database_manager = DemoBlockChainManager()
 
 app = Flask(__name__)
 
