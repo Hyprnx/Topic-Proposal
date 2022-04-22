@@ -119,12 +119,6 @@ def main():
         'data': 'Hello, this is the first block in the blockchain',
     }
 
-    path = 'common/demo_data/employee.json'
-    with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-
-    for i in data:
-        mng.insert_block(i, signer='Duc Anh')
 
 if __name__ == '__main__':
     main()

@@ -6,6 +6,8 @@ from bc import *
 from database_manager import *
 
 demo_database_manager = DemoBlockChainManager()
+customer_database_manager = CustomerBlockChainManager()
+employee_database_manager = EmployeeBlockChainManager()
 
 app = Flask(__name__)
 
