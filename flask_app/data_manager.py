@@ -1,29 +1,57 @@
 import flask
 from flasgger import Swagger
-from flask import Flask, request, make_response, jsonify
-
+from flask import Flask, request, make_response, jsonify, render_template, request
+from templates import pages
 from bc import *
 from database_manager import *
+
 
 demo_database_manager = DemoBlockChainManager()
 customer_database_manager = CustomerBlockChainManager()
 employee_database_manager = EmployeeBlockChainManager()
 
-app = Flask(__name__)
+
+app = Flask(__name__, template_folder='templates')
 
 app.config['SWAGGER'] = {
     'doc_dir': 'common/data_structure/apidocs'
 }
 swagger = Swagger(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
+
 
 @app.route('/')
 def landing_page():
-    return "Hello, welcome to our topic proposal"
+    return 'Hello'
+
+
+@app.route('/home')
+def home():
+    return render_template('pages/home.html')
+
+
+@app.route('/about')
+def about():
+    return render_template('pages/about.html')
+
+@app.route('/register')
+def register():
+    return 'Working on this, hold on pals'
+
+@app.route('/login')
+def login():
+    return 'Working on this, hold on pals'
+
+@app.route('/validation')
+def validation():
+    return {'status': 'OK'}
+
 
 @app.route('/status')
 def system_status():
     return {'status': 'OK'}
+
+
+
 
 @app.route('/demo', methods=['POST'])
 def demo():
@@ -64,4 +92,4 @@ def get_good():
     return {'result': 'Successfully got good information from databases'}
 
 if __name__ == '__main__':
-    app.run(port=8088)
+    app.run(port=13030)
