@@ -1,7 +1,8 @@
 import flask
 from flasgger import Swagger
 from flask import Flask, request, make_response, jsonify, render_template, request
-from templates import pages
+from forms import *
+
 from bc import *
 from database_manager import *
 
@@ -35,11 +36,20 @@ def about():
 
 @app.route('/register')
 def register():
-    return 'Working on this, hold on pals'
+    form = RegisterForm(request.form)
+    return render_template('forms/register.html', form=form)
+
 
 @app.route('/login')
 def login():
-    return 'Working on this, hold on pals'
+    form = LoginForm(request.form)
+    return render_template('forms/login.html', form=form)
+
+@app.route('/forgot')
+def forgot():
+    form = ForgotForm(request.form)
+    return render_template('forms/forgot.html', form=form   )
+
 
 @app.route('/validation')
 def validation():
@@ -49,8 +59,6 @@ def validation():
 @app.route('/status')
 def system_status():
     return {'status': 'OK'}
-
-
 
 
 @app.route('/demo', methods=['POST'])
