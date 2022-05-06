@@ -48,7 +48,7 @@ def login():
 @app.route('/forgot')
 def forgot():
     form = ForgotForm(request.form)
-    return render_template('forms/forgot.html', form=form   )
+    return render_template('forms/forgot.html', form=form)
 
 
 @app.route('/validation')
