@@ -1,6 +1,6 @@
 import flask
 from flasgger import Swagger
-from flask import Flask, request, make_response, jsonify, render_template, redirect
+from flask import Flask, request, make_response, jsonify, render_template, redirect, session
 from forms import *
 
 import re
@@ -8,14 +8,17 @@ import re
 from bc import *
 from database_manager import *
 from customers_db_manager import CustomerDatabaseManager
+from employee_manager import EmployeeDatabaseManager
+
+from credentials.secret_keys import key
 
 
 demo_database_manager = DemoBlockChainManager()
 customer_database_manager = CustomerDatabaseManager()
-employee_database_manager = EmployeeBlockChainManager()
-
+employee_database_manager = EmployeeDatabaseManager()
 
 app = Flask(__name__, template_folder='templates')
+app.secret_key = key
 
 app.config['SWAGGER'] = {
     'doc_dir': 'common/data_structure/apidocs'
@@ -66,7 +69,28 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
+    if request.method == 'POST' and 'email' in request.form and 'password' in request.form:
+        email = request.form['email']
+        password = request.form['password']
+        check_status = employee_database_manager.check_employee_exist(email, password)
+        if check_status[1]:
+            employee_info = check_status[0]
+            app.logger.info(employee_info)
+            session['email'] = employee_info['email']
+            session['username'] = employee_info['username']
+            app.logger.info('Logged in successfully !')
+            session['loggedin'] = True
+            return render_template('success/success_login.html', mess=f'Welcome back, {employee_info["username"]}')
+        else:
+            return render_template('errors/400.html', mess='Wrong Credential')
     return render_template('forms/login.html', form=form)
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    session.pop('loggedin', None)
+    session.pop('email', None)
+    session.pop('username', None)
+    return redirect('/home', code=302)
 
 
 @app.route('/forgot', methods = ['POST'])
