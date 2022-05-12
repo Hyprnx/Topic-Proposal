@@ -1,23 +1,14 @@
 import pymongo.errors
-from pymongo import MongoClient
-from pymongo.database import Database
 from pymongo.results import InsertOneResult
 from bc import *
 from base import BaseClass
 from common.exceptions.Validation import ValidationException
+from mongo_db_connect import connect_to_database
 
-host = 'localhost'
-port = 27017
-
-client = MongoClient(host, port)
-
-db = client.database
-
-if not isinstance(db, Database):
-    raise ConnectionError("Connection failed, respond is not a MongoDB Database instance")
+db = connect_to_database()
 
 
-class DatabaseManager(BaseClass):
+class DataManager(BaseClass):
     DB_NAME = None
 
     def __init__(self):
@@ -29,15 +20,13 @@ class DatabaseManager(BaseClass):
 
     def insert_data(self, data=None):
         raise NotImplementedError('NOT IMPLEMENTED, CALL METHOD IN SUBCLASS')
-#
-#     def query_data(self, data=None):
-#         raise NotImplementedError('NOT IMPLEMENTED, CALL METHOD IN SUBCLASS')
 
-    # def edit_data(self, data=None):
-    #     raise NotImplementedError('NOT IMPLEMENTED, CALL METHOD IN SUBCLASS')
+    def query_data(self, data=None):
+        raise NotImplementedError('NOT IMPLEMENTED, CALL METHOD IN SUBCLASS')
 
 
-class BlockChainManager(DatabaseManager):
+
+class BlockChainManager(DataManager):
     DB_NAME = None
 
     def __init__(self):
@@ -97,12 +86,6 @@ class BlockChainManager(DatabaseManager):
 
 class DemoBlockChainManager(BlockChainManager):
     DB_NAME = 'demo'
-
-    def __init__(self):
-        super().__init__()
-
-class CustomerBlockChainManager(BlockChainManager):
-    DB_NAME = 'customers'
 
     def __init__(self):
         super().__init__()

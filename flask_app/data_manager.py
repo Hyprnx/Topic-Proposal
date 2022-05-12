@@ -1,14 +1,17 @@
 import flask
 from flasgger import Swagger
-from flask import Flask, request, make_response, jsonify, render_template, request
+from flask import Flask, request, make_response, jsonify, render_template, redirect
 from forms import *
+
+import re
 
 from bc import *
 from database_manager import *
+from customers_db_manager import CustomerDatabaseManager
 
 
 demo_database_manager = DemoBlockChainManager()
-customer_database_manager = CustomerBlockChainManager()
+customer_database_manager = CustomerDatabaseManager()
 employee_database_manager = EmployeeBlockChainManager()
 
 
@@ -22,7 +25,7 @@ swagger = Swagger(app)
 
 @app.route('/')
 def landing_page():
-    return 'Hello'
+    return redirect('/home', code=302)
 
 
 @app.route('/home')
@@ -34,18 +37,39 @@ def home():
 def about():
     return render_template('pages/about.html')
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm(request.form)
+    if request.method == 'POST' and 'name' in request.form and 'password' in request.form and 'email' in request.form:
+        username = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+        password_confirmation = request.form['confirm']
+        app.logger.info(f'{username}, {password}, {email}')
+
+        if password_confirmation != password:
+            return render_template('errors/400.html', mess='Your credential does not match, please try again!')
+
+        if not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+            return render_template('errors/400.html', mess='Invalid email address, please try again!')
+
+        if customer_database_manager.check_customer_exist(email):
+            return render_template('errors/400.html', mess='Customer exited, please try again!')
+
+        res = customer_database_manager.register_customers(name=username, email=email, password=password)
+        if res:
+            return render_template('success/success_register.html')
+
     return render_template('forms/register.html', form=form)
 
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
     return render_template('forms/login.html', form=form)
 
-@app.route('/forgot')
+
+@app.route('/forgot', methods = ['POST'])
 def forgot():
     form = ForgotForm(request.form)
     return render_template('forms/forgot.html', form=form)
@@ -66,7 +90,7 @@ def demo():
     signer = request.args.get('signer', 'To Duc Anh')
     data = request.args.get('data', 'This is a blank block')
     try:
-        respond = demo_database_manager.insert_data(data, signer)
+        respond = demo_database_manager.insert_block(data, signer)
         return make_response(jsonify(respond), 200)
     except pymongo.errors.OperationFailure as e:
         return make_response(jsonify(e), 500)
@@ -100,4 +124,5 @@ def get_good():
     return {'result': 'Successfully got good information from databases'}
 
 if __name__ == '__main__':
-    app.run(port=13030)
+    app.run(host='0.0.0.0', port=13030, debug=True) # Everyone within the same network can use
+    # app.run(port=13030) # Run on local machine only
