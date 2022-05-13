@@ -72,9 +72,8 @@ def login():
     if request.method == 'POST' and 'email' in request.form and 'password' in request.form:
         email = request.form['email']
         password = request.form['password']
-        check_status = employee_database_manager.check_employee_exist(email, password)
-        if check_status[1]:
-            employee_info = check_status[0]
+        employee_info = employee_database_manager.check_employee_exist(email, password)
+        if employee_info:
             app.logger.info(employee_info)
             session['email'] = employee_info['email']
             session['username'] = employee_info['username']
@@ -93,7 +92,7 @@ def logout():
     return redirect('/home', code=302)
 
 
-@app.route('/forgot', methods = ['POST'])
+@app.route('/forgot', methods=['POST'])
 def forgot():
     form = ForgotForm(request.form)
     return render_template('forms/forgot.html', form=form)

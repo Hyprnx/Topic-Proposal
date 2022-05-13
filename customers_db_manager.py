@@ -27,8 +27,9 @@ class CustomerDatabaseManager(BaseClass):
                 'password': hashed_password,
                 'timestamp': str(datetime.datetime.now()),
             }
-            self.log.info('Inserting customer:', customer_info)
+            self.log.info(f'Inserting customer: {customer_info} to database...')
             db[self.DB_NAME].insert_one(customer_info)
+            self.log.info(f'Successfully inserting customer to database')
             return True
         except BaseException as e:
             raise e

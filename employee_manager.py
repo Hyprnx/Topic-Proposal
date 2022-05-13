@@ -12,11 +12,11 @@ class EmployeeDatabaseManager(BaseClass):
 
     def check_employee_exist(self, email, password):
         respond = db[self.DB_NAME].find_one({'email': email})
-        hashed_password = processed = hashlib.sha256(str(password).encode('utf-8')).hexdigest()
+        hashed_password = hashlib.sha256(str(password).encode('utf-8')).hexdigest()
         try:
             if respond['password'] == hashed_password:
-                return respond, True
+                return respond
         except BaseException as e:
             self.log.info(e)
-            return False
+            return None
 
