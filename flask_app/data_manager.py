@@ -12,7 +12,6 @@ from employee_manager import EmployeeDatabaseManager
 
 from credentials.secret_keys import key
 
-
 demo_database_manager = DemoBlockChainManager()
 customer_database_manager = CustomerDatabaseManager()
 employee_database_manager = EmployeeDatabaseManager()
@@ -39,6 +38,7 @@ def home():
 @app.route('/about')
 def about():
     return render_template('pages/about.html')
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -84,6 +84,7 @@ def login():
             return render_template('errors/400.html', mess='Wrong Credential')
     return render_template('forms/login.html', form=form)
 
+
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     session.pop('loggedin', None)
@@ -100,6 +101,7 @@ def forgot():
 
 @app.route('/validation')
 def validation():
+
     return {'status': 'OK'}
 
 
@@ -146,6 +148,7 @@ def get_good():
     # Adding method goes here
     return {'result': 'Successfully got good information from databases'}
 
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=13030, debug=True) # Everyone within the same network can use
+    app.run(host='0.0.0.0', port=9200, debug=True)  # Everyone within the same network can use
     # app.run(port=13030) # Run on local machine only
