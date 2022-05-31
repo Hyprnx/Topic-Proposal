@@ -70,19 +70,36 @@ class BlockChainManager(DataManager):
         last_node = db[self.DB_NAME].find().sort('timestamp', -1)[0]
         return last_node['blockhash'], last_node['index']
 
+    # def validate(self):
+    #     self.log.info('Validating Blockchain...')
+    #     prev_hash = '0'
+    #     for i, data in enumerate(db[self.DB_NAME].find()):
+    #         if data['previous_hash'] == prev_hash:
+    #             prev_hash = data['blockhash']
+    #         else:
+    #             self.log.info(prev_hash, data['previous_hash'])
+    #             self.log.critical('Blockchain interrupted, this blockchain is no longer valid')
+    #             return False
+    #     self.log.info('Blockchain is safe')
+    #     return True
+
     def validate(self):
+        from pprint import pprint
         self.log.info('Validating Blockchain...')
         prev_hash = '0'
         for i, data in enumerate(db[self.DB_NAME].find()):
-            if data['previous_hash'] == prev_hash:
-                prev_hash = data['blockhash']
-            else:
-                self.log.info(prev_hash, data['previous_hash'])
+            if i == 0 or i == 1:
+                continue
+            blockhash = data['_id']
+            del data['_id']
+            encoded_block = json.dumps(data, sort_keys=True).encode()
+            hashed = hashlib.sha256(encoded_block).hexdigest()
+            if hashed != blockhash:
                 self.log.critical('Blockchain interrupted, this blockchain is no longer valid')
                 return False
+
         self.log.info('Blockchain is safe')
         return True
-
 
 class DemoBlockChainManager(BlockChainManager):
     DB_NAME = 'demo'
@@ -97,11 +114,11 @@ class EmployeeBlockChainManager(BlockChainManager):
         super().__init__()
 
 def main():
-    mng = EmployeeBlockChainManager()
+    mng = DemoBlockChainManager()
     blockchain_first_block = {
         'data': 'Hello, this is the first block in the blockchain',
     }
-    mng.validate()
+    mng.validation_test()
 
 if __name__ == '__main__':
     main()
