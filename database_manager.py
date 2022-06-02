@@ -118,7 +118,7 @@ def main():
     blockchain_first_block = {
         'data': 'Hello, this is the first block in the blockchain',
     }
-    mng.validation_test()
+    mng.validate()
 
 if __name__ == '__main__':
     main()

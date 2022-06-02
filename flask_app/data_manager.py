@@ -27,7 +27,7 @@ swagger = Swagger(app)
 
 @app.route('/')
 def landing_page():
-    return redirect('/home', code=302)
+    return redirect('/about', code=302)
 
 
 @app.route('/home')
@@ -101,8 +101,10 @@ def forgot():
 
 @app.route('/validation')
 def validation():
-
-    return {'status': 'OK'}
+    res = demo_database_manager.validate()
+    if res:
+        mess = 'Successfully validated transaction Blockchain'
+    return render_template('success/success_validate.html', mess=mess)
 
 
 @app.route('/status')

@@ -1,0 +1,10 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Blockchain applications</h1>
+  <p class="lead">{{ mess }}</p>
+</div>
+<p><a href="{{url_for('about')}}">Back home</a></p>
+{% endblock %}
