@@ -1,0 +1,128 @@
+[
+ {
+  "no": 1,
+  "product_id": 552,
+  "product_name": "20in Monitor",
+  "price": 109.99,
+  "stock": 123
+ },
+ {
+  "no": 2,
+  "product_id": 2344,
+  "product_name": "27in 4K Gaming Monitor",
+  "price": 389.99,
+  "stock": 12
+ },
+ {
+  "no": 3,
+  "product_id": 9981,
+  "product_name": "27in FHD Monitor",
+  "price": 389.99,
+  "stock": 12
+ },
+ {
+  "no": 4,
+  "product_id": 50234,
+  "product_name": "34in Ultrawide Monitor",
+  "price": 379.99,
+  "stock": 24
+ },
+ {
+  "no": 5,
+  "product_id": 1608,
+  "product_name": "AA Batteries (4-pack)",
+  "price": 3.84,
+  "stock": 10
+ },
+ {
+  "no": 6,
+  "product_id": 6015,
+  "product_name": "AAA Batteries (4-pack)",
+  "price": 389.99,
+  "stock": 12
+ },
+ {
+  "no": 7,
+  "product_id": 2107,
+  "product_name": "Apple Airpods Headphones",
+  "price": 2.99,
+  "stock": 2
+ },
+ {
+  "no": 8,
+  "product_id": 22081,
+  "product_name": "Bose SoundSport Headphones",
+  "price": 99.99,
+  "stock": 20
+ },
+ {
+  "no": 9,
+  "product_id": 2366,
+  "product_name": "Flatscreen TV",
+  "price": 300,
+  "stock": 15
+ },
+ {
+  "no": 10,
+  "product_id": 8123,
+  "product_name": "Google Phone",
+  "price": 600,
+  "stock": 10
+ },
+ {
+  "no": 11,
+  "product_id": 2980,
+  "product_name": "iPhone",
+  "price": 700,
+  "stock": 12
+ },
+ {
+  "no": 12,
+  "product_id": 19242,
+  "product_name": "LG Washing Machine",
+  "price": 600,
+  "stock": 3
+ },
+ {
+  "no": 13,
+  "product_id": 58001,
+  "product_name": "Lightning Charging Cable",
+  "price": 14.95,
+  "stock": 12
+ },
+ {
+  "no": 14,
+  "product_id": 34232,
+  "product_name": "Macbook Pro Laptop",
+  "price": 1700,
+  "stock": 20
+ },
+ {
+  "no": 15,
+  "product_id": 12101,
+  "product_name": "ThinkPad Laptop",
+  "price": 999.99,
+  "stock": 12
+ },
+ {
+  "no": 16,
+  "product_id": 140721,
+  "product_name": "USB-C Charging Cable",
+  "price": 11.95,
+  "stock": 12
+ },
+ {
+  "no": 17,
+  "product_id": 121045,
+  "product_name": "Vareebadd Phone",
+  "price": 400,
+  "stock": 12
+ },
+ {
+  "no": 18,
+  "product_id": 161923,
+  "product_name": "Wired Headphones",
+  "price": 11.99,
+  "stock": 21
+ }
+]
