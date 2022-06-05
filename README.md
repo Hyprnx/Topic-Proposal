@@ -11,6 +11,5 @@ managing SME"
   <a href="https://github.com/Hyprnx/used-cars-prices-prediction">
     <img src="common/DataFlow.png" alt="Logo" width="100%">
   </a>
-  <h3 align="center">Introduction to Blockchain and its applications in
-managing SME</h3>
+  <h3 align="center">Simple data flow in this project (if you cant see anything, switch to light mode)</h3>
 </div>
