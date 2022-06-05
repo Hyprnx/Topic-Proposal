@@ -107,12 +107,6 @@ class DemoBlockChainManager(BlockChainManager):
     def __init__(self):
         super().__init__()
 
-class EmployeeBlockChainManager(BlockChainManager):
-    DB_NAME = 'employee'
-
-    def __init__(self):
-        super().__init__()
-
 def main():
     mng = DemoBlockChainManager()
     blockchain_first_block = {

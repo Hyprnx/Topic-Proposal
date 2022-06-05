@@ -6,14 +6,14 @@ class RegisterForm(Form):
     name = StringField(
         'Username', validators=[DataRequired(), Length(min=6, max=25, message='Name must be in range 6 - 25')]
     )
-    email = StringField(
-        'Email', validators=[DataRequired(), Length(min=6, max=40)]
+    phone = StringField(
+        'Phone', validators=[DataRequired(), Length(min=9, max=10, message='Phone number is not valid')]
     )
-    password = PasswordField(
-        'Password', validators=[DataRequired(), Length(min=6, max=40)]
+    address = StringField(
+        'Address', validators=[DataRequired(), Length(min=6, max=128)]
     )
-    confirm = PasswordField(
-        'Repeat Password',[DataRequired(), EqualTo('password', message='Passwords must match')]
+    confirm = StringField(
+        'Repeat Address', [DataRequired(), EqualTo('Address', message='Address must match')]
     )
 
 
@@ -23,6 +23,6 @@ class LoginForm(Form):
 
 
 class ForgotForm(Form):
-    email = StringField(
-        'Email', validators=[DataRequired(), Length(min=6, max=40)]
+    phone = StringField(
+        'phone', validators=[DataRequired(), Length(min=9, max=10, message='Phone number is not valid')]
     )

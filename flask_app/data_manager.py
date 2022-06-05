@@ -43,23 +43,23 @@ def about():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm(request.form)
-    if request.method == 'POST' and 'name' in request.form and 'password' in request.form and 'email' in request.form:
+    if request.method == 'POST' and 'name' in request.form and 'phone' in request.form and 'address' in request.form:
         username = request.form['name']
-        email = request.form['email']
-        password = request.form['password']
-        password_confirmation = request.form['confirm']
-        app.logger.info(f'{username}, {password}, {email}')
+        phone = request.form['phone']
+        address = request.form['address']
+        address_confirmation = request.form['confirm']
+        app.logger.info(f'{username}, {phone}, {address}')
 
-        if password_confirmation != password:
+        if address_confirmation != address:
             return render_template('errors/400.html', mess='Your credential does not match, please try again!')
 
-        if not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-            return render_template('errors/400.html', mess='Invalid email address, please try again!')
+        if not re.match(r'', phone):
+            return render_template('errors/400.html', mess='Invalid phone number, please try again!')
 
-        if customer_database_manager.check_customer_exist(email):
+        if customer_database_manager.check_customer_exist(phone):
             return render_template('errors/400.html', mess='Customer exited, please try again!')
 
-        res = customer_database_manager.register_customers(name=username, email=email, password=password)
+        res = customer_database_manager.register_customers(name=username, phone=phone, address=address)
         if res:
             return render_template('success/success_register.html')
 
@@ -104,6 +104,8 @@ def validation():
     res = demo_database_manager.validate()
     if res:
         mess = 'Successfully validated transaction Blockchain'
+    else:
+        mess = 'Failed to validate blockchain, proceed with caution'
     return render_template('success/success_validate.html', mess=mess)
 
 
@@ -128,14 +130,6 @@ def add_employee():
     entry = request.json
     # Adding method goes here
     return {'result': 'Successfully added employee to the database'}
-
-
-@app.route('/add_customer', methods=['POST'])
-def add_customer():
-    entry = request.json
-    # Adding method goes here
-    return {'result': 'Successfully added customer to the database'}
-
 
 @app.route('/add_good', methods=['POST'])
 def add_good():
