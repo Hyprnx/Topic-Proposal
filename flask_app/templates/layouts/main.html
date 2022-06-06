@@ -60,9 +60,9 @@
               <ul class="dropdown-menu">
                 <li><a href="{{ url_for('validation')}}">Blockchain Validation</a></li>
                 <li><a href="{{ url_for('logout')}}"> Logout</a></li>
-                <li><a>Ran out</a></li>
+                <li><a href="{{ url_for('transaction')}}">Making Transaction</a></li>
                 <li class="divider"></li>
-                <li class="dropdown-header">Of</li>
+                <li class="dropdown-header">Ran out Of</li>
                 <li><a>Ideas</a></li>
                 <li><a>Sorry</a></li>
               </ul>
@@ -98,7 +98,7 @@
     <div class="container">
       <p>To Duc Anh, with the help from Real Python Flask Boilerplate&copy; All Rights Reserved.</p>
       {% block footer %}{% endblock %}
-        <h6> {{session.username}} </h6>
+        <h6>Employee name: {{session.username}} </h6>
     </div>
   </div>
 

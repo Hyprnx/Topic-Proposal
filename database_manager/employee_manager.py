@@ -1,8 +1,7 @@
 from base import BaseClass
-import json
 import hashlib
-from mongo_db_connect import connect_to_database
-import datetime
+from common.mongo_db_connect import connect_to_database
+
 db = connect_to_database()
 
 class EmployeeDatabaseManager(BaseClass):
@@ -19,4 +18,18 @@ class EmployeeDatabaseManager(BaseClass):
         except BaseException as e:
             self.log.info(e)
             return None
+
+    def get_employee_info(self, phone):
+        try:
+            respond = db[self.DB_NAME].find_one({'phone_number': str(phone)})
+            del respond['_id']
+            del respond['started_working']
+            del respond['password']
+            del respond['Address']
+            return respond
+
+        except BaseException as e:
+            self.log.info(f'No employee found for phone: {phone}, error: {e}')
+            return False
+
 

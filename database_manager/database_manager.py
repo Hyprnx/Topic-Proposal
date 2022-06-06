@@ -3,7 +3,7 @@ from pymongo.results import InsertOneResult
 from bc import *
 from base import BaseClass
 from common.exceptions.Validation import ValidationException
-from mongo_db_connect import connect_to_database
+from common.mongo_db_connect import connect_to_database
 
 db = connect_to_database()
 
@@ -84,7 +84,6 @@ class BlockChainManager(DataManager):
     #     return True
 
     def validate(self):
-        from pprint import pprint
         self.log.info('Validating Blockchain...')
         prev_hash = '0'
         for i, data in enumerate(db[self.DB_NAME].find()):
@@ -103,6 +102,12 @@ class BlockChainManager(DataManager):
 
 class DemoBlockChainManager(BlockChainManager):
     DB_NAME = 'demo'
+
+    def __init__(self):
+        super().__init__()
+
+class TransactionBlockChainManager(BlockChainManager):
+    DB_NAME = 'transactions'
 
     def __init__(self):
         super().__init__()

@@ -1,0 +1,8 @@
+{% extends 'layouts/main.html' %}
+{% block content %}
+  <h1>Transaction</h1>
+  <p>{{ mess }}</p>
+  <p><a href="{{url_for('about')}}">Back home, cancel transaction</a></p>
+  <p><a href="{{url_for('login')}}">Or, login</a></p>
+
+{% endblock %}

@@ -1,20 +1,21 @@
-import flask
 from flasgger import Swagger
 from flask import Flask, request, make_response, jsonify, render_template, redirect, session
 from forms import *
 
 import re
 
-from bc import *
-from database_manager import *
-from customers_db_manager import CustomerDatabaseManager
-from employee_manager import EmployeeDatabaseManager
+from database_manager.database_manager import *
+from database_manager.customers_db_manager import CustomerDatabaseManager
+from database_manager.employee_manager import EmployeeDatabaseManager
+from database_manager.product_manager import ProductDatabaseManager
 
 from credentials.secret_keys import key
 
+transaction_database_manager = TransactionBlockChainManager()
 demo_database_manager = DemoBlockChainManager()
 customer_database_manager = CustomerDatabaseManager()
 employee_database_manager = EmployeeDatabaseManager()
+product_database_manager = ProductDatabaseManager()
 
 app = Flask(__name__, template_folder='templates')
 app.secret_key = key
@@ -25,8 +26,16 @@ app.config['SWAGGER'] = {
 swagger = Swagger(app)
 
 
+@app.errorhandler(404)
+def not_found():
+    return render_template("errors/404.html",
+                           mess='Oops, we think you made mistake somewhere, please check the web path .·´¯`(>▂<)´¯`·. ')
+
+
 @app.route('/')
 def landing_page():
+    session['loggedin'] = False
+    session['username'] = 'Not logged in'
     return redirect('/about', code=302)
 
 
@@ -51,13 +60,14 @@ def register():
         app.logger.info(f'{username}, {phone}, {address}')
 
         if address_confirmation != address:
-            return render_template('errors/400.html', mess='Your credential does not match, please try again!')
+            return render_template('failed/failed_registering.html',
+                                   mess='Your credential does not match, please try again!')
 
         if not re.match(r'', phone):
-            return render_template('errors/400.html', mess='Invalid phone number, please try again!')
+            return render_template('failed/failed_registering.html', mess='Invalid phone number, please try again!')
 
         if customer_database_manager.check_customer_exist(phone):
-            return render_template('errors/400.html', mess='Customer exited, please try again!')
+            return render_template('failed/failed_registering.html', mess='Customer exited, please try again!')
 
         res = customer_database_manager.register_customers(name=username, phone=phone, address=address)
         if res:
@@ -81,8 +91,52 @@ def login():
             session['loggedin'] = True
             return render_template('success/success_login.html', mess=f'Welcome back, {employee_info["username"]}')
         else:
-            return render_template('errors/400.html', mess='Wrong Credential')
+            return render_template('failed/failed_login.html', mess='Wrong Credential')
     return render_template('forms/login.html', form=form)
+
+
+@app.route('/transaction', methods=['GET', 'POST'])
+def transaction():
+    form = TransactionForm(request.form)
+    if request.method == 'POST':
+        if session['loggedin'] and 'customer_phone' in request.form and 'employee_phone' in request.form and 'product_id' in request.form and 'amount' in request.form:
+
+            app.logger.info('Getting employee info')
+            employee_info = employee_database_manager.get_employee_info(request.form['employee_phone'])
+            app.logger.info(employee_info)
+
+            app.logger.info('Getting customer info')
+            customer_info = customer_database_manager.get_customer_info(request.form['customer_phone'])
+            app.logger.info(customer_info)
+
+            app.logger.info('Getting product info')
+            product_info = product_database_manager.get_product_info(request.form['product_id'])
+            app.logger.info(product_info)
+            amount = request.form['amount']
+
+
+            if not employee_info:
+                return render_template('failed/failed_transaction.html', mess='Not employee')
+
+            if not customer_info:
+                return render_template('failed/failed_transaction.html', mess='Not customer yet')
+
+            if not product_info:
+                return render_template('failed/failed_transaction.html', mess='No product found')
+
+            if not int(amount) < product_info['stock']:
+                return render_template('failed/failed_transaction.html', mess='Not enough stock for this good')
+
+            transaction_info = {}
+            transaction_info = {
+                'employee_info': employee_info,
+                'customer_info': customer_info,
+                'product_info': product_info,
+                'bought_at': str(datetime.datetime.now())
+            }
+        return transaction_info
+    return render_template('forms/transaction.html', form=form)
+
 
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -101,7 +155,7 @@ def forgot():
 
 @app.route('/validation')
 def validation():
-    res = demo_database_manager.validate()
+    res = transaction_database_manager.validate()
     if res:
         mess = 'Successfully validated transaction Blockchain'
     else:
@@ -111,7 +165,8 @@ def validation():
 
 @app.route('/status')
 def system_status():
-    return {'status': 'OK'}
+    return {'status': 'OK',
+            'session': session}
 
 
 @app.route('/demo', methods=['POST'])
@@ -130,6 +185,7 @@ def add_employee():
     entry = request.json
     # Adding method goes here
     return {'result': 'Successfully added employee to the database'}
+
 
 @app.route('/add_good', methods=['POST'])
 def add_good():

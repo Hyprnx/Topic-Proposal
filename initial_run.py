@@ -1,13 +1,11 @@
-from pymongo import MongoClient
 import datetime
 import json
-from pprint import pprint
 from datetime import datetime
 import random
 import time
 import unicodedata
 
-from mongo_db_connect import connect_to_database
+from common.mongo_db_connect import connect_to_database
 db = connect_to_database()
 
 employee = db.employee
