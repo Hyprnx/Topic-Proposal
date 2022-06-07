@@ -8,6 +8,13 @@ class CustomerDatabaseManager(BaseClass):
         super().__init__()
         self.DB_NAME = 'customer'
 
+    def query(self, query):
+        try:
+            return db[self.DB_NAME].find(query)
+        except BaseException as e:
+            self.log.error(e)
+            return False
+
     def check_customer_exist(self, phone):
         res = db[self.DB_NAME].find_one({'Phone number': str(phone)})
         if res:

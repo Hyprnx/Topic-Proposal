@@ -5,6 +5,7 @@ from wtforms.validators import DataRequired, EqualTo, Length
 
 class QueryForm(Form):
     query = StringField('query', validators=[DataRequired()])
+    field = StringField('field', validators=[DataRequired()])
 
 
 class AddProductForm(Form):

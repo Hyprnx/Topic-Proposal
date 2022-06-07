@@ -1,7 +1,7 @@
 from flasgger import Swagger
 from flask import Flask, request, make_response, jsonify, render_template, redirect, session
 from forms import *
-
+import pandas
 import re
 
 from database_manager.database_manager import *
@@ -234,10 +234,21 @@ def forgot():
 
 @app.route('/query', methods=['GET', 'POST'])
 def query():
-    return {'mess': 'implementing'}
-    # form = QueryForm(request.form)
-    #
-    # return render_template('forms/query.html', form=form)
+    form = QueryForm(request.form)
+    if request.method == 'POST':
+        if request.form['field'] == 'customer' or 'Customer':
+            respond = customer_database_manager.query(request.form['query'])
+        elif request.form['field'] == 'product' or 'Product':
+            respond = product_database_manager.query(request.form['query'])
+        elif request.form['field'] == 'employee' or 'Employee':
+            respond = employee_database_manager.query(request.form['query'])
+
+        if not isinstance(respond, dict):
+            return render_template('failed/failed_import_product.html', mess='Query must be a dictionary')
+        else:
+            pass
+
+    return render_template('forms/query.html', form=form)
 
 
 @app.route('/validation')

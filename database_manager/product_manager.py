@@ -9,6 +9,13 @@ class ProductDatabaseManager(BaseClass):
         super().__init__()
         self.DB_NAME = 'products'
 
+    def query(self, query):
+        try:
+            return db[self.DB_NAME].find(query)
+        except BaseException as e:
+            self.log.error(e)
+            return False
+
     def get_product_info(self, product_id):
         try:
             respond = db[self.DB_NAME].find_one({'product_id': int(product_id)})

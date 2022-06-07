@@ -9,6 +9,13 @@ class EmployeeDatabaseManager(BaseClass):
         super().__init__()
         self.DB_NAME = 'employee'
 
+    def query(self, query):
+        try:
+            return db[self.DB_NAME].find(query)
+        except BaseException as e:
+            self.log.error(e)
+            return False
+
     def check_employee_exist(self, email, password):
         respond = db[self.DB_NAME].find_one({'email': email})
         hashed_password = hashlib.sha256(str(password).encode('utf-8')).hexdigest()
