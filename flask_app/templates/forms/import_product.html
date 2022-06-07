@@ -1,0 +1,14 @@
+{% extends 'layouts/form.html' %}
+{% block title %}Import Product{% endblock %}
+{% block content %}
+  <form method="post" class="form">
+    <h3 class="form-heading">Import Product Form <a href="{{ url_for('home') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a></h3>
+    {{ form.product_name(class_ = 'form-control first-input', placeholder = form.product_name.label.text, required = true, autofocus = true) }}
+    {{ form.product_id(class_ = 'form-control first-input', placeholder = form.product_id.label.text, required = true, autofocus = true) }}
+    {{ form.product_amount(class_ = 'form-control', placeholder = form.product_amount.label.text, required = true) }}
+    {{ form.product_price(class_ = 'form-control', placeholder = form.product_price.label.text, required = true) }}
+    {{ form.employee_phone(class_ = 'form-control last-input', placeholder = form.employee_phone.label.text, required = true) }}
+    <p><a href="{{ url_for('about') }}">Want to return home instead?</a></p>
+    <input type="submit" value="Authorize transaction!" class="btn btn-primary btn-lg btn-block">
+  </form>
+{% endblock %}

@@ -31,11 +31,19 @@ def not_found():
     return render_template("errors/404.html",
                            mess='Oops, we think you made mistake somewhere, please check the web path .·´¯`(>▂<)´¯`·. ')
 
+@app.route('/status')
+def system_status():
+    return {'status': 'OK',
+            'session': session}
+
+@app.before_first_request
+def initialize():
+    session['loggedin'] = False
+    session['username'] = 'Not logged in'
+
 
 @app.route('/')
 def landing_page():
-    session['loggedin'] = False
-    session['username'] = 'Not logged in'
     return redirect('/about', code=302)
 
 
@@ -95,6 +103,14 @@ def login():
     return render_template('forms/login.html', form=form)
 
 
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    session.pop('loggedin', None)
+    session.pop('email', None)
+    session.pop('username', None)
+    return redirect('/home', code=302)
+
+
 @app.route('/transaction', methods=['GET', 'POST'])
 def transaction():
     form = TransactionForm(request.form)
@@ -151,6 +167,48 @@ def transaction():
 
     return render_template('forms/transaction.html', form=form)
 
+
+@app.route('/import_product', methods=['POST', 'GET'])
+def import_product():
+    form = AddProductForm(request.form)
+    if request.method == 'POST':
+        if session['loggedin'] and 'product_name' in request.form and 'product_id' in request.form and 'product_amount'\
+                in request.form and 'product_price' in request.form and 'employee_phone' in request.form:
+
+            product_id = int(request.form['product_id'])
+            product_name = request.form['product_name']
+            add_amount = int(request.form['product_amount'])
+            price = float(request.form['product_price'])
+
+            app.logger.info('Getting employee info')
+            employee_info = employee_database_manager.get_employee_info(request.form['employee_phone'])
+            app.logger.info(employee_info)
+
+
+            app.logger.info('Getting product info')
+            product_info = product_database_manager.get_product_info(request.form['product_id'])
+            app.logger.info(f'Product info from database: {product_info}')
+
+            # conditions checking
+            if not employee_info:
+                return render_template('failed/failed_import_product.html', mess='No employee logged in')
+
+            if not product_info:
+                respond = product_database_manager.import_product(new_product=True, product_id=product_id, product_name=product_name, price=price, new_stock=add_amount)
+                if respond:
+                    return render_template('success/success_importing.html', mess='Successfully added new product')
+                else:
+                    return render_template('failed/failed_import_product.html', mess='Error while updating product stock')
+
+            else:
+                respond = product_database_manager.import_product(new_product=False, product_id=product_id, old_amount=product_info['stock'], new_amount=add_amount)
+                if respond:
+                    return render_template('success/success_importing.html', mess='Successfully added new product, the mistyped name, price will not be modified in database')
+                else:
+                    return render_template('failed/failed_import_product.html', mess='Error while updating product stock')
+
+    return render_template('forms/import_product.html', form=form)
+
 @app.route('/demo', methods=['POST'])
 def demo():
     signer = request.args.get('signer', 'To Duc Anh')
@@ -161,18 +219,15 @@ def demo():
     except pymongo.errors.OperationFailure as e:
         return make_response(jsonify(e), 500)
 
-@app.route('/logout', methods=['GET', 'POST'])
-def logout():
-    session.pop('loggedin', None)
-    session.pop('email', None)
-    session.pop('username', None)
-    return redirect('/home', code=302)
-
 
 @app.route('/forgot', methods=['POST'])
 def forgot():
     form = ForgotForm(request.form)
     return render_template('forms/forgot.html', form=form)
+
+@app.route('/query', methods=['POST'])
+def query():
+    return {'mess': 'implementing'}
 
 
 @app.route('/validation')
@@ -185,33 +240,6 @@ def validation():
     return render_template('success/success_validate.html', mess=mess)
 
 
-@app.route('/status')
-def system_status():
-    return {'status': 'OK',
-            'session': session}
-
-
-@app.route('/add_employee', methods=['POST'])
-def add_employee():
-    entry = request.json
-    # Adding method goes here
-    return {'result': 'Successfully added employee to the database'}
-
-
-@app.route('/add_good', methods=['POST'])
-def add_good():
-    entry = request.json
-    # Adding method goes here
-    return {'result': 'Successfully added good to the database'}
-
-
-@app.route('/get_good', methods=['GET'])
-def get_good():
-    entry = request.json
-    # Adding method goes here
-    return {'result': 'Successfully got good information from databases'}
-
-
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=9200, debug=True)  # Everyone within the same network can use
+    app.run(host='0.0.0.0', port=9200)  # Everyone within the same network can use
     # app.run(port=13030) # Run on local machine only

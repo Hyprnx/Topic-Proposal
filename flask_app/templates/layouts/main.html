@@ -62,9 +62,11 @@
                 <li><a href="{{ url_for('logout')}}"> Logout</a></li>
                 <li><a href="{{ url_for('transaction')}}">Making Transaction</a></li>
                 <li class="divider"></li>
-                <li class="dropdown-header">Ran out Of</li>
-                <li><a>Ideas</a></li>
-                <li><a>Sorry</a></li>
+                <li class="dropdown-header">Additional function</li>
+                <li><a href="{{ url_for('import_product')}}">Import product</a></li>
+                <li><a href="{{ url_for('forgot')}}">Forgot</a></li>
+                <li><a href="{{ url_for('query')}}">Query</a></li>
+
               </ul>
             </li>
             <li><a href="{{ url_for('register') }}">Customer Signup</a></li>

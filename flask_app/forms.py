@@ -2,6 +2,13 @@ from flask_wtf import Form
 from wtforms import StringField, PasswordField
 from wtforms.validators import DataRequired, EqualTo, Length
 
+class AddProductForm(Form):
+    product_name = StringField('Product Name', validators=[DataRequired(), Length(min=1, max=256, message='Product Name invalid')])
+    product_id = StringField('Product ID', validators=[DataRequired(), Length(min=1, max=256, message='Product ID invalid')])
+    product_amount = StringField('Product Amount', validators=[DataRequired(), Length(min=1, max=5, message='Number of products should be in range 1-99999')])
+    product_price = StringField('Product Price', validators=[DataRequired()])
+    employee_phone = StringField('Employee_phone', validators=[DataRequired(), Length(min=9, max=10, message='Employee Phone number invalid')])
+
 
 class TransactionForm(Form):
     customer_phone = StringField('Customer_phone', validators=[DataRequired(), Length(min=9, max=10, message='Customer Phone number invalid')])
