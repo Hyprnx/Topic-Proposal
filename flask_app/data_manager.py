@@ -25,21 +25,28 @@ app.config['SWAGGER'] = {
 }
 swagger = Swagger(app)
 
+@app.before_first_request
+def initialize():
+    session['loggedin'] = False
+    session['username'] = 'Not logged in'
+
 
 @app.errorhandler(404)
 def not_found():
     return render_template("errors/404.html",
                            mess='Oops, we think you made mistake somewhere, please check the web path .·´¯`(>▂<)´¯`·. ')
 
+@app.errorhandler(500)
+def not_found():
+    return render_template("errors/500.html",
+                           mess='Oops, we think we have made mistake somewhere, please submit issue to our github at https://github.com/Hyprnx/Topic-Proposal. Thank you!')
+
+
+
 @app.route('/status')
 def system_status():
     return {'status': 'OK',
             'session': session}
-
-@app.before_first_request
-def initialize():
-    session['loggedin'] = False
-    session['username'] = 'Not logged in'
 
 
 @app.route('/')
@@ -220,14 +227,17 @@ def demo():
         return make_response(jsonify(e), 500)
 
 
-@app.route('/forgot', methods=['POST'])
+@app.route('/forgot', methods=['GET', 'POST'])
 def forgot():
     form = ForgotForm(request.form)
     return render_template('forms/forgot.html', form=form)
 
-@app.route('/query', methods=['POST'])
+@app.route('/query', methods=['GET', 'POST'])
 def query():
     return {'mess': 'implementing'}
+    # form = QueryForm(request.form)
+    #
+    # return render_template('forms/query.html', form=form)
 
 
 @app.route('/validation')
@@ -241,5 +251,5 @@ def validation():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=9200)  # Everyone within the same network can use
+    app.run(host='0.0.0.0', port=9200, debug=True)  # Everyone within the same network can use
     # app.run(port=13030) # Run on local machine only

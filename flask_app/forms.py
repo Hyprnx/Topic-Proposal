@@ -2,6 +2,11 @@ from flask_wtf import Form
 from wtforms import StringField, PasswordField
 from wtforms.validators import DataRequired, EqualTo, Length
 
+
+class QueryForm(Form):
+    query = StringField('query', validators=[DataRequired()])
+
+
 class AddProductForm(Form):
     product_name = StringField('Product Name', validators=[DataRequired(), Length(min=1, max=256, message='Product Name invalid')])
     product_id = StringField('Product ID', validators=[DataRequired(), Length(min=1, max=256, message='Product ID invalid')])
