@@ -199,7 +199,7 @@ def import_product():
                     return render_template('success/success_importing.html', mess='Successfully added new product')
                 else:
                     return render_template('failed/failed_import_product.html', mess='Error while updating product stock')
-
+            # update
             else:
                 respond = product_database_manager.import_product(new_product=False, product_id=product_id, old_amount=product_info['stock'], new_amount=add_amount)
                 if respond:
