@@ -70,27 +70,16 @@ class BlockChainManager(DataManager):
         last_node = db[self.DB_NAME].find().sort('timestamp', -1)[0]
         return last_node['blockhash'], last_node['index']
 
-    # def validate(self):
-    #     self.log.info('Validating Blockchain...')
-    #     prev_hash = '0'
-    #     for i, data in enumerate(db[self.DB_NAME].find()):
-    #         if data['previous_hash'] == prev_hash:
-    #             prev_hash = data['blockhash']
-    #         else:
-    #             self.log.info(prev_hash, data['previous_hash'])
-    #             self.log.critical('Blockchain interrupted, this blockchain is no longer valid')
-    #             return False
-    #     self.log.info('Blockchain is safe')
-    #     return True
-
     def validate(self):
         self.log.info('Validating Blockchain...')
         prev_hash = '0'
         for i, data in enumerate(db[self.DB_NAME].find()):
             if i == 0 or i == 1:
                 continue
-            blockhash = data['_id']
-            del data['_id']
+            self.log.info(data.keys())
+            blockhash = data['blockhash']
+            del data['blockhash']
+            del data["_id"]
             encoded_block = json.dumps(data, sort_keys=True).encode()
             hashed = hashlib.sha256(encoded_block).hexdigest()
             if hashed != blockhash:

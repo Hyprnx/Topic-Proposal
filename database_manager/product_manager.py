@@ -19,5 +19,16 @@ class ProductDatabaseManager(BaseClass):
             self.log.info(f'No product found for product_id: {product_id}, error:{e}')
             return False
 
+    def sell_product(self, product_id, current_amount, amount_sell):
+        try:
+            new_amount = int(current_amount) - int(amount_sell)
+            myquery = {"product_id": int(product_id)}
+            newvalues = {"$set": {"stock": new_amount}}
+            db[self.DB_NAME].update_one(myquery, newvalues)
+            return True
+        except BaseException as e:
+            self.log.error(e)
+            return False
+
     def add_product(self):
         pass

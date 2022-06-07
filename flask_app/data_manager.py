@@ -114,7 +114,7 @@ def transaction():
             app.logger.info(product_info)
             amount = request.form['amount']
 
-
+            # conditions checking
             if not employee_info:
                 return render_template('failed/failed_transaction.html', mess='Not employee')
 
@@ -127,17 +127,39 @@ def transaction():
             if not int(amount) < product_info['stock']:
                 return render_template('failed/failed_transaction.html', mess='Not enough stock for this good')
 
-            transaction_info = {}
+            # block data creating
             transaction_info = {
                 'employee_info': employee_info,
                 'customer_info': customer_info,
                 'product_info': product_info,
-                'bought_at': str(datetime.datetime.now())
+                'amount': int(amount),
+                'total_bill': int(amount) * product_info['price']
             }
-        return transaction_info
+            signer = employee_info['Name']
+
+            try:
+                respond = transaction_database_manager.insert_block(data=transaction_info, signer=signer)
+                if respond:
+                    update = product_database_manager.sell_product(product_id=product_info['product_id'], current_amount=product_info['stock'], amount_sell=amount)
+                    if update:
+                        return render_template('success/success_transaction.html', mess='Success validate blockchain and added block to blockchain')
+                    return render_template('failed/failed_transaction.html', mess='Database refused to insert block')
+                else:
+                    return render_template('failed/failed_transaction.html', mess='Database refused to insert block')
+            except pymongo.errors.OperationFailure as e:
+                return render_template('failed/failed_transaction.html', mess=f'Database refused to insert block, error: {e}')
+
     return render_template('forms/transaction.html', form=form)
 
-
+@app.route('/demo', methods=['POST'])
+def demo():
+    signer = request.args.get('signer', 'To Duc Anh')
+    data = request.args.get('data', 'This is a blank block')
+    try:
+        respond = demo_database_manager.insert_block(data, signer)
+        return make_response(jsonify(respond), 200)
+    except pymongo.errors.OperationFailure as e:
+        return make_response(jsonify(e), 500)
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
@@ -167,17 +189,6 @@ def validation():
 def system_status():
     return {'status': 'OK',
             'session': session}
-
-
-@app.route('/demo', methods=['POST'])
-def demo():
-    signer = request.args.get('signer', 'To Duc Anh')
-    data = request.args.get('data', 'This is a blank block')
-    try:
-        respond = demo_database_manager.insert_block(data, signer)
-        return make_response(jsonify(respond), 200)
-    except pymongo.errors.OperationFailure as e:
-        return make_response(jsonify(e), 500)
 
 
 @app.route('/add_employee', methods=['POST'])
