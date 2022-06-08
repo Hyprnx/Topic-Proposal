@@ -3,6 +3,7 @@ from flask import Flask, request, make_response, jsonify, render_template, redir
 from forms import *
 import pandas
 import re
+import json
 
 from database_manager.database_manager import *
 from database_manager.customers_db_manager import CustomerDatabaseManager
@@ -236,17 +237,25 @@ def forgot():
 def query():
     form = QueryForm(request.form)
     if request.method == 'POST':
+        query = json.loads(request.form['query'])
+        app.logger.info(query)
         if request.form['field'] == 'customer' or 'Customer':
-            respond = customer_database_manager.query(request.form['query'])
+            respond = customer_database_manager.query(query)
         elif request.form['field'] == 'product' or 'Product':
-            respond = product_database_manager.query(request.form['query'])
+            respond = product_database_manager.query(query)
         elif request.form['field'] == 'employee' or 'Employee':
-            respond = employee_database_manager.query(request.form['query'])
+            respond = employee_database_manager.query(query)
 
-        if not isinstance(respond, dict):
-            return render_template('failed/failed_import_product.html', mess='Query must be a dictionary')
+        app.logger.info(type(respond))
+        app.logger.info(respond)
+        if respond:
+            return_value = {}
+            for i, data in enumerate(respond):
+                return_value[i] = data
+
+            return return_value
         else:
-            pass
+            return {"Mess": "No respond"}
 
     return render_template('forms/query.html', form=form)
 
