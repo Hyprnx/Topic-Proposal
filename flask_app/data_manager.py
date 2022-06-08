@@ -251,6 +251,7 @@ def query():
         if respond:
             return_value = {}
             for i, data in enumerate(respond):
+                app.logger.info(data)
                 return_value[i] = data
 
             return return_value
