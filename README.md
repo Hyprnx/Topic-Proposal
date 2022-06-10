@@ -36,7 +36,7 @@ This report includes two big sections:
 
 • Coding demo with Blockchain applications in managing SME.
 
-This report were made with introduction purposes, so all complicated mathematical have been cut-off for reader- friendly purposes. For detailed version, we recommend reading the book and other references we have included in the end of the report. Reports and project contributions can be found in the end of the report as well. The report can be found here: [Report](report/report.pdf).
+This report were made with introduction purposes, so all complicated mathematical have been cut-off for reader- friendly purposes. For detailed version, we recommend reading the book and other references we have included in the end of the report. Reports and project contributions can be found in the end of the report as well. The report can be found here: [report](report/report.pdf).
 
 This project is the second big section, it will be our proposal for a proof-of-concept project that implemented a system to help a small convenience store or convenience chain in managing the store, using some simplified version of the Blockchain’s four aspects. We implemented a system that allows the managers or the shareholders to directly view the transactions that were made, with complete trust. This proof of concept system also helps SMEs to reduce the operation costs by giving them a simple tool that automatically does the accounting to eliminate the cost of hiring accountants. The system can provide data for the authorities to help them do taxes and other regulations without the need of humans. The proof-of-concept system was built with the help from Flask and MongoDB (via Pymongo) with Python.
 
