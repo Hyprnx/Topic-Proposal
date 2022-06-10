@@ -44,7 +44,7 @@ This project is the second big section, it will be our proposal for a proof-of-c
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Requirements
-This projects requires [MongoDB](https://www.mongodb.com/) as the database so please be sure to install MongoDB to your machine first,[Click here to download]([https://www.mongodb.com/](https://www.mongodb.com/try/download/). Tutorials can be found on the internet.
+This projects requires [MongoDB](https://www.mongodb.com/) as the database so please be sure to install MongoDB to your machine first, [Click here to download](https://www.mongodb.com/try/download/). Tutorials can be found on the internet.
 
 
 The port for MongoDB to work with on our machine is 27017, you can change this to the correct port where MongoDB run on your machine, simply go to [connect to database](common/mongo_db_connect.py) and change the host and port to the correct host and port that you want. 
